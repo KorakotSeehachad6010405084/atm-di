@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+    <!--change mode in this constructor-->
+    <bean id="Bank" class="atmSpringJDBC.Bank">
+        <constructor-arg ref="ReadFromDatabaseJDBC"/>
+    </bean>
+
+    <bean id="ATM" class="atmSpringJDBC.ATM">
+        <constructor-arg ref="Bank"/>
+    </bean>
+    <bean id="ATMSimulator" class="atmSpringJDBC.ATMSimulator">
+        <constructor-arg ref="ATM"/>
+    </bean>
+
+    <!--JDBC Beans-->
+    <bean id="customerDataAccessObjectImp" class="atmSpringJDBC.JDBCConfig.CustomersDataAccessImprement">
+        <constructor-arg ref="jdbcTemplate" />
+    </bean>
+
+    <!--mode-->
+    <bean id="ReadFromDatabase" class="atmSpringJDBC.Strategy.ReadFromDatabase"></bean>
+    <bean id="ReadFromFile" class="atmSpringJDBC.Strategy.ReadFromFile">
+        <constructor-arg value="customers.txt"/>
+    </bean>
+    <bean id="ReadFromDatabaseJDBC" class="atmSpringJDBC.Strategy.ReadFromDatabaseJDBC"></bean>
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="sqliteDataSource" />
+    </bean>
+
+    <bean id="sqliteDataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.sqlite.JDBC" />
+        <property name="url" value="jdbc:sqlite:ATMCustomers.db" />
+    </bean>
+
+</beans>
